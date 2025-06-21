@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reflectra</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter&display=swap');
+
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #c3d6b8, #f0f7f4);
+      color: #2e3a20;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      overflow-x: hidden;
+    }
+
+    header {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      color: #3a4b20;
+      text-shadow: 1px 1px 4px rgba(74, 88, 29, 0.3);
+      margin-bottom: 1rem;
+      user-select: none;
+    }
+
+    main {
+      background: #f7f9f6dd;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 20px;
+      box-shadow:
+        0 8px 24px rgba(113, 132, 58, 0.2),
+        inset 0 0 50px #d9e4c7;
+      padding: 2.5rem 2rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 1.15rem;
+      margin-bottom: 0.4rem;
+      color: #3a4b20;
+      user-select: none;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      border: 2px solid #91a663;
+      background: #e7f0d6;
+      color: #34411d;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+      box-shadow: inset 1px 1px 6px #a6c080;
+    }
+    input[type="date"]:focus {
+      outline: none;
+      border-color: #607a23;
+      box-shadow: 0 0 8px #94b44b;
+    }
+
+    .mood-picker {
+      display: flex;
+      justify-content: space-between;
+      font-size: 2.8rem;
+      user-select: none;
+    }
+    .mood-picker span {
+      background: #e1e9c5;
+      padding: 0.3rem 0.6rem;
+      border-radius: 15px;
+      box-shadow:
+        2px 4px 8px #a0b084cc,
+        inset 0 -2px 8px #b7d583cc;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      filter: drop-shadow(0 2px 1px #8fa660aa);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+      width: 48px;
+      height: 48px;
+    }
+    .mood-picker span:hover {
+      background: #9ab94f;
+      color: #f2f3ea;
+      transform: scale(1.3);
+      box-shadow:
+        0 4px 10px #a3b865dd,
+        inset 0 0 12px #8ba02ecc;
+    }
+    .mood-picker span.selected {
+      background: #7d9337;
+      color: #f4f5ed;
+      box-shadow:
+        0 6px 16px #758c34dd,
+        inset 0 0 14px #5f7326cc;
+      transform: scale(1.4);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      border-radius: 18px;
+      border: 2px solid #91a663;
+      padding: 1rem 1.2rem;
+      font-size: 1.15rem;
+      line-height: 1.5;
+      background: #f1f6e7;
+      box-shadow:
+        inset 0 1px 6px #d9e9b4;
+      font-family: 'Inter', sans-serif;
+      color: #34411d;
+      transition: border-color 0.3s ease;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #607a23;
+      box-shadow: 0 0 8px #94b44b;
+    }
+    textarea::placeholder {
+      font-style: italic;
+      color: #88975e;
+    }
+
+    button {
+      align-self: center;
+      padding: 0.8rem 2.4rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      border-radius: 28px;
+      border: none;
+      background: linear-gradient(135deg, #7d9337, #4d6320);
+      color: #f5f7eb;
+      box-shadow:
+        0 8px 20px #6a7f1e99,
+        inset 0 -3px 6px #94b84d;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #95aa50, #5e7730);
+      transform: translateY(-3px);
+    }
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .journal-list {
+      margin-top: 1rem;
+      max-height: 280px;
+      overflow-y: auto;
+      background: #e9f0d8;
+      border-radius: 18px;
+      padding: 1.2rem 1.5rem;
+      box-shadow: inset 0 0 14px #c9db9aaa;
+      user-select: text;
+    }
+    .journal-list p {
+      font-style: italic;
+      color: #71804f;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .journal-entry {
+      background: #d1deb0dd;
+      border-radius: 18px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: 2px 4px 10px #a5b26fbb;
+      white-space: pre-wrap;
+      font-size: 1.1rem;
+      font-family: 'Inter', sans-serif;
+      color: #354314;
+      user-select: text;
+      transition: background 0.3s ease;
+    }
+    .journal-entry:hover {
+      background: #c3d17bdd;
+    }
+
+    .journal-date {
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 0.4rem;
+      color: #4d6320;
+      user-select: none;
+    }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      color: #586231cc;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Scrollbar for journal list */
+    .journal-list::-webkit-scrollbar {
+      width: 8px;
+    }
+    .journal-list::-webkit-scrollbar-thumb {
+      background: #8ea744cc;
+      border-radius: 10px;
+    }
+    .journal-list::-webkit-scrollbar-track {
+      background: #d8e1ab88;
+      border-radius: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      header {
+        font-size: 2.2rem;
+      }
+      main {
+        padding: 2rem 1.2rem 2.5rem;
+      }
+      .mood-picker {
+        font-size: 2.2rem;
+      }
+      textarea {
+        min-height: 110px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>Reflectra — Jurnal Interaktif Penuh Makna</header>
+
+  <main>
+      <section id="welcome" style="margin-bottom: 1.8rem; font-style: italic; color: #556833; font-size: 1.1rem; user-select: none; text-align: center;">
+    <p><strong>Selamat datang di Reflectra!</strong></p>
+    <p>Tempat di mana kamu bisa menorehkan cerita dan perasaanmu setiap hari dengan penuh ketenangan dan inspirasi.</p>
+    <p>Pilih moodmu, tulis jurnal, dan simpan momen berharga hidupmu.</p>
+  </section>
+
+    <label for="datePicker">Pilih Tanggal:</label>
+    <input type="date" id="datePicker" aria-label="Pilih tanggal jurnal" />
+
+    <div class="mood-picker" aria-label="Pilih Mood">
+      <span role="button" aria-label="Bahagia" data-mood="😊" tabindex="0">😊</span>
+      <span role="button" aria-label="Sedih" data-mood="😢" tabindex="0">😢</span>
+      <span role="button" aria-label="Tenang" data-mood="😌" tabindex="0">😌</span>
+      <span role="button" aria-label="Marah" data-mood="😠" tabindex="0">😠</span>
+      <span role="button" aria-label="Bersemangat" data-mood="🔥" tabindex="0">🔥</span>
+    </div>
+
+    <label for="journalText">Tulis Jurnalmu:</label>
+    <textarea
+      id="journalText"
+      placeholder="Bagikan cerita atau perasaanmu hari ini..."
+      aria-label="Kolom penulisan jurnal"
+    ></textarea>
+
+    <button id="saveBtn" aria-label="Simpan jurnal">Simpan Jurnal</button>
+
+    <section class="journal-list" id="journalList" aria-live="polite" aria-label="Daftar Jurnal">
+      <!-- Entri jurnal muncul di sini -->
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Jurnal Interaktif • Dibuat oleh Delta
+  </footer>
+
+  <script>
+    const datePicker = document.getElementById('datePicker');
+    const moodSpans = document.querySelectorAll('.mood-picker span');
+    const journalText = document.getElementById('journalText');
+    const saveBtn = document.getElementById('saveBtn');
+    const journalList = document.getElementById('journalList');
+
+    let selectedMood = '';
+
+    // Set default date ke hari ini
+    const today = new Date().toISOString().slice(0, 10);
+    datePicker.value = today;
+
+    // Load jurnal saat halaman dibuka
+    window.onload = () => {
+      loadJournal(today);
+    };
+
+    // Pilih mood, klik atau keyboard (enter/space)
+    moodSpans.forEach(span => {
+      span.addEventListener('click', () => {
+        selectMood(span);
+      });
+      span.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectMood(span);
+        }
+      });
+    });
+
+    function selectMood(span) {
+      moodSpans.forEach(s => s.classList.remove('selected'));
+      span.classList.add('selected');
+      selectedMood = span.getAttribute('data-mood');
+    }
+
+    // Simpan jurnal
+    saveBtn.addEventListener('click', () => {
+      const date = datePicker.value;
+      const text = journalText.value.trim();
+      if (!date) {
+        alert('Pilih tanggal terlebih dahulu!');
+        return;
+      }
+      if (!selectedMood) {
+        alert('Pilih moodmu terlebih dahulu!');
+        return;
+      }
+      if (!text) {
+        alert('Tulis sesuatu dulu ya sebelum menyimpan.');
+        return;
+      }
+
+      let journals = JSON.parse(localStorage.getItem('journals') || '{}');
+      journals[date] = {
+        mood: selectedMood,
+        text: text,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem('journals', JSON.stringify(journals));
+      alert('Jurnal berhasil disimpan!');
+
+      journalText.value = '';
+      selectedMood = '';
+      moodSpans.forEach(s => s.classList.remove('selected'));
+      loadJournal(date);
+    });
+
+    // Load jurnal saat tanggal diubah
+    datePicker.addEventListener('change', e => {
+      loadJournal(e.target.value);
+      journalText.value = '';
+      selectedMood = '';
+      moodSpans.forEach(s => s.classList.remove('selected'));
+    });
+
+    function loadJournal(date) {
+      journalList.innerHTML = '';
+      let journals = JSON.parse(localStorage.getItem('journals') || '{}');
+      if (journals[date]) {
+        const entry = journals[date];
+        const div = document.createElement('div');
+        div.classList.add('journal-entry');
+        div.innerHTML = `
+          <div class="journal-date">${date} ${entry.mood}</div>
+          <div>${entry.text}</div>
+        `;
+        journalList.appendChild(div);
+      } else {
+        journalList.innerHTML = '<p>Belum ada jurnal untuk tanggal ini.</p>';
+      }
+    }
+  </script>
+</body>
+</html>
